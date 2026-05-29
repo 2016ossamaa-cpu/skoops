@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skoops! | Sensation Architecture & Neural Engine 2026</title>
+    <meta name="description" content="Skoops! Ice Cream - Al Takhassousi, Riyadh. Kunafa Taco, Creme Brulee, Tiramisu, Matcha, and more. Order via HungerStation, Jahez, Talabat.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #FF5E00;
+            --secondary: #050505;
+            --accent: #FF007F;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.55);
+            --text-muted: rgba(255, 255, 255, 0.3);
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --font: 'Tajawal', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: var(--font);
+            background-color: var(--secondary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(ellipse at 30% 10%, rgba(255, 94, 0, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 0, 127, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.03) 0%, transparent 70%);
+        }
+
+        #three-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        #app { position: relative; z-index: 1; }
+
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 1.5rem;
+        }
+        @media (min-width: 768px) { section { padding: 8rem 3rem; } }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s var(--ease-out-expo);
+        }
+        .glass:hover {
+            border-color: rgba(255, 94, 0, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 94, 0, 0.15) inset;
+        }
+        .glass-static {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            background: var(--primary);
+            color: #fff;
+            font-family: var(--font);
+            font-weight: 900;
+            font-size: 1rem;
+            border: none;
+            border-radius: 1.25rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s var(--ease-out-expo);
+            box-shadow: 0 15px 40px rgba(255, 94, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 25px 55px rgba(255, 94, 0, 0.5);
+        }
+
+        .btn-glass {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: var(--font);
+            font-weight: 900;
+            font-size: 1rem;
+            border-radius: 1.25rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 94, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+        #navbar.scrolled {
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.75rem 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+        .nav-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .nav-logo:hover { transform: scale(1.05); }
+        .nav-links {
+            display: none;
+            gap: 2rem;
+            list-style: none;
+        }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-links a:hover { color: #fff; }
+        .cart-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .cart-btn:hover {
+            background: rgba(255, 94, 0, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(255, 94, 0, 0.3);
+        }
+        .cart-count {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.7rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .cart-count.pulse {
+            animation: cartPulse 0.4s ease;
+        }
+        @keyframes cartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); background: var(--accent); }
+        }
+
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 5rem;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid rgba(255, 94, 0, 0.4);
+            border-radius: 9999px;
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(8px);
+            background: rgba(255, 94, 0, 0.05);
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 10vw, 11rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 640px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+        .product-card {
+            border-radius: 2.5rem;
+            overflow: hidden;
+            transition: all 0.6s var(--ease-out-expo);
+            cursor: pointer;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+        .product-card .img-wrap {
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            border-radius: 2rem 2rem 0 0;
+            position: relative;
+        }
+        .product-card .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s var(--ease-out-expo);
+        }
+        .product-card:hover .img-wrap img { transform: scale(1.1); }
+        .product-card .img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+        }
+        .product-card:hover .img-overlay { opacity: 0.3; }
+        .product-info { padding: 1.5rem; }
+        .product-info h3 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+        .product-info .desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+        }
+        .product-info .price {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 1.3rem;
+        }
+        .product-info .add-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.9rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-family: var(--font);
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .product-info .add-btn:hover {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        .match-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.6rem;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            letter-spacing: 0.1em;
+            z-index: 2;
+            box-shadow: 0 8px 20px rgba(255, 94, 0, 0.4);
+        }
+
+        .engine-container {
+            border-radius: 3.5rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) { .engine-container { padding: 4rem; } }
+        .step-content {
+            display: none;
+            animation: fadeSlideIn 0.6s var(--ease-out-expo) forwards;
+        }
+        .step-content.active { display: block; }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        @media (min-width: 640px) { .mood-grid { grid-template-columns: repeat(4, 1fr); } }
+        .mood-btn {
+            padding: 2rem 1rem;
+            border-radius: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s var(--ease-out-expo);
+            font-weight: 900;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+        .mood-btn i {
+            font-size: 2.5rem;
+            transition: transform 0.4s ease;
+        }
+        .mood-btn:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 94, 0, 0.6);
+            background: rgba(255, 94, 0, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        .mood-btn:hover i { transform: scale(1.2); }
+        .mood-btn.energized i { color: #FF7B30; }
+        .mood-btn.chill i { color: #00C2FF; }
+        .mood-btn.creative i { color: #A855F7; }
+        .mood-btn.reward i { color: #FACC15; }
+
+        .sensory-slider-group { margin-bottom: 2.5rem; }
+        .sensory-slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 900;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .sensory-slider-group label .val {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        input[type="range"].sensory-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        input[type="range"].sensory-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 94, 0, 0.7);
+            transition: all 0.3s ease;
+            border: 3px solid #fff;
+        }
+        input[type="range"].sensory-range::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 35px rgba(255, 94, 0, 0.9);
+        }
+
+        .result-card {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) { .result-card { flex-direction: row; } }
+        .result-img-wrap {
+            flex: 1;
+            aspect-ratio: 1;
+            border-radius: 2.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+        .result-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s var(--ease-out-expo);
+        }
+        .result-img-wrap:hover img { transform: scale(1.08); }
+        .result-details { flex: 1; }
+        .result-details .match {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            display: block;
+            margin-bottom: 1rem;
+            text-decoration: underline;
+            text-underline-offset: 6px;
+        }
+        .result-details h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+        .result-details p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        @media (min-width: 768px) {
+            footer {
+                text-align: right;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+        }
+        footer .socials a {
+            color: var(--text-secondary);
+            margin: 0 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer .socials a:hover { color: var(--primary); }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--primary);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            z-index: 200;
+            transition: transform 0.5s var(--ease-out-expo);
+            box-shadow: 0 15px 40px rgba(255, 94, 0, 0.3);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s var(--ease-out-expo);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 94, 0, 0.4); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        @media (min-width: 768px) { .info-grid { grid-template-columns: repeat(3, 1fr); } }
+        .info-card {
+            padding: 2rem;
+            border-radius: 2rem;
+            text-align: center;
+        }
+        .info-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .info-card h4 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+        .info-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .info-card a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .delivery-grid {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .delivery-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: var(--font);
+            font-weight: 800;
+            font-size: 0.85rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .delivery-btn:hover {
+            background: rgba(255, 94, 0, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .hours-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.9rem;
+        }
+        .hours-table td:first-child {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .hours-table td:last-child {
+            text-align: left;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="three-canvas"></canvas>
+
+    <div id="app">
+
+        <nav id="navbar">
+            <div class="nav-logo" onclick="scrollToSection('hero')">
+                SKOOPS<span style="color:var(--primary);">!</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li>
+                <li><a href="#engine" onclick="scrollToSection('engine')">المحرك العصبي</a></li>
+                <li><a href="#menu" onclick="scrollToSection('menu')">المنيو</a></li>
+                <li><a href="#info" onclick="scrollToSection('info')">الموقع</a></li>
+            </ul>
+            <div class="cart-btn" onclick="toggleCart()">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </nav>
+
+        <section id="hero">
+            <div class="container reveal">
+                <span class="hero-badge">Sensation Architecture - الرياض</span>
+                <h1 class="hero-title">
+                    BEYOND<br>
+                    <span class="text-gradient">FLAVOR.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    نحن لا نصمم مذاقاً؛ نحن نصمم استجابة عصبية تبدأ من أول قرمشة وتنتهي بفيض من الدوبامين. مرحباً بك في مستقبل التذوق.
+                </p>
+                <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                    <a href="#engine" class="btn-primary" onclick="scrollToSection('engine')">
+                        <i class="fa-solid fa-brain"></i> ابدأ معايرة الذوق
+                    </a>
+                    <a href="#menu" class="btn-glass" onclick="scrollToSection('menu')">
+                        <i class="fa-solid fa-flask"></i> استكشف المختبر
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="engine">
+            <div class="container reveal">
+                <div style="text-align:center;margin-bottom:3rem;">
+                    <h2 style="font-size:clamp(2rem,5vw,4rem);font-weight:900;letter-spacing:-0.02em;">
+                        المحرك <span class="text-gradient">العصبي</span>
+                    </h2>
+                    <p style="color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.2em;font-size:0.7rem;">Neural Recommendation System v3.0</p>
+                </div>
+
+                <div class="glass-static engine-container" id="engineBox">
+                    <div class="step-content active" id="step1">
+                        <h3 style="font-size:1.8rem;font-weight:900;text-align:center;margin-bottom:2.5rem;">
+                            حدد <span style="color:var(--primary);">موجتك العصبية</span> الحالية:
+                        </h3>
+                        <div class="mood-grid">
+                            <button class="mood-btn energized" onclick="selectMood('energized')">
+                                <i class="fa-solid fa-bolt-lightning"></i> طاقة
+                            </button>
+                            <button class="mood-btn chill" onclick="selectMood('chill')">
+                                <i class="fa-solid fa-snowflake"></i> روقان
+                            </button>
+                            <button class="mood-btn creative" onclick="selectMood('creative')">
+                                <i class="fa-solid fa-palette"></i> استكشاف
+                            </button>
+                            <button class="mood-btn reward" onclick="selectMood('reward')">
+                                <i class="fa-solid fa-crown"></i> مكافأة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step-content" id="step2">
+                        <h3 style="font-size:1.8rem;font-weight:900;text-align:center;margin-bottom:2.5rem;">
+                            معايرة الـ <span style="color:var(--primary);">DNA</span> الحسي
+                        </h3>
+                        <div style="max-width:500px;margin:0 auto;">
+                            <div class="sensory-slider-group">
+                                <label>القرمشة <span class="val" id="crunchVal">50%</span></label>
+                                <input type="range" min="0" max="100" value="50" class="sensory-range" id="crunchRange" oninput="updateSlider('crunch')">
+                            </div>
+                            <div class="sensory-slider-group">
+                                <label>الحلاوة <span class="val" id="sweetVal">50%</span></label>
+                                <input type="range" min="0" max="100" value="50" class="sensory-range" id="sweetRange" oninput="updateSlider('sweet')">
+                            </div>
+                            <div class="sensory-slider-group">
+                                <label>البرودة <span class="val" id="tempVal">50%</span></label>
+                                <input type="range" min="0" max="100" value="50" class="sensory-range" id="tempRange" oninput="updateSlider('temp')">
+                            </div>
+                            <div class="sensory-slider-group">
+                                <label>الشدة <span class="val" id="intensityVal">50%</span></label>
+                                <input type="range" min="0" max="100" value="50" class="sensory-range" id="intensityRange" oninput="updateSlider('intensity')">
+                            </div>
+                            <button class="btn-primary" style="width:100%;margin-top:1.5rem;" onclick="runAlgorithm()">
+                                <i class="fa-solid fa-microchip"></i> تشغيل الخوارزمية العصبية
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step-content" id="step3">
+                        <div class="result-card">
+                            <div class="result-img-wrap">
+                                <img id="resultImg" src="" alt="المنتج الموصى به">
+                                <span class="match-badge" id="resultMatch">MATCH 98%</span>
+                            </div>
+                            <div class="result-details">
+                                <span class="match">✦ توصية المحرك الحسي</span>
+                                <h2 id="resultTitle">...</h2>
+                                <p id="resultDesc">...</p>
+                                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                                    <button class="btn-primary" onclick="addRecommendedToBag()">
+                                        <i class="fa-solid fa-cart-plus"></i> أضف للحقيبة
+                                    </button>
+                                    <button class="btn-glass" onclick="resetEngine()">
+                                        <i class="fa-solid fa-rotate-right"></i> إعادة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu">
+            <div class="container reveal">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:2rem;margin-bottom:3rem;">
+                    <div>
+                        <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:900;letter-spacing:-0.02em;">
+                            قائمة <span class="text-gradient">الهندسة الحسية</span>
+                        </h2>
+                        <p style="color:var(--text-secondary);font-weight:500;font-size:1.1rem;">مجموعة مختارة لتحفيز الحواس وتغيير مفهوم القوام.</p>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <span class="glass-static" style="padding:0.5rem 1.2rem;border-radius:999px;font-weight:800;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;">Ice Taco</span>
+                        <span class="glass-static" style="padding:0.5rem 1.2rem;border-radius:999px;font-weight:800;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;">Pudding</span>
+                        <span class="glass-static" style="padding:0.5rem 1.2rem;border-radius:999px;font-weight:800;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--primary);border-color:var(--primary);">Signature</span>
+                    </div>
+                </div>
+                <div class="product-grid" id="productGrid"></div>
+            </div>
+        </section>
+
+        <section id="info">
+            <div class="container reveal">
+                <div style="text-align:center;margin-bottom:3rem;">
+                    <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:900;letter-spacing:-0.02em;">
+                        تواصل <span class="text-gradient">معنا</span>
+                    </h2>
+                    <p style="color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.2em;font-size:0.7rem;">الموقع / التوصيل / الساعات</p>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card glass-static">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <h4>الموقع</h4>
+                        <p>4631 شارع التخصصي<br>حي النخيل، الرياض 12381<br>المملكة العربية السعودية</p>
+                        <a href="https://maps.google.com/?q=24.6895,46.6858" target="_blank" style="display:inline-block;margin-top:0.5rem;">
+                            <i class="fa-solid fa-map"></i> فتح في خرائط Google
+                        </a>
+                    </div>
+
+                    <div class="info-card glass-static">
+                        <i class="fa-solid fa-clock"></i>
+                        <h4>ساعات العمل</h4>
+                        <table class="hours-table">
+                            <tr><td>الأحد</td><td>2:00 م - 1:00 ص</td></tr>
+                            <tr><td>الإثنين - الأربعاء</td><td>12:00 ص - 1:00 ص<br>2:00 م - 1:00 ص</td></tr>
+                            <tr><td>الخميس</td><td>12:00 ص - 2:00 ص<br>2:00 م - 2:00 ص</td></tr>
+                            <tr><td>الجمعة - السبت</td><td>12:00 ص - 2:00 ص<br>2:00 م - 2:00 ص</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="info-card glass-static">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        <h4>التوصيل</h4>
+                        <p>اطلب الآن عبر تطبيقات التوصيل</p>
+                        <div class="delivery-grid">
+                            <a href="https://hungerstation.com" target="_blank" class="delivery-btn">
+                                <i class="fa-solid fa-motorcycle"></i> HungerStation
+                            </a>
+                            <a href="https://jahez.com" target="_blank" class="delivery-btn">
+                                <i class="fa-solid fa-bicycle"></i> Jahez
+                            </a>
+                            <a href="https://talabat.com" target="_blank" class="delivery-btn">
+                                <i class="fa-solid fa-car"></i> Talabat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align:center;margin-top:3rem;">
+                    <h4 style="font-size:1.2rem;font-weight:900;margin-bottom:1rem;">تابعنا على وسائل التواصل</h4>
+                    <div class="social-links">
+                        <a href="https://www.tiktok.com/@skoops.sa" target="_blank" title="TikTok">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </a>
+                        <a href="https://www.instagram.com/skoops.sa" target="_blank" title="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="https://www.snapchat.com/add/skoops.sa" target="_blank" title="Snapchat">
+                            <i class="fa-brands fa-snapchat"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div>
+                <div class="nav-logo" style="font-size:2rem;">SKOOPS<span style="color:var(--primary);">!</span></div>
+                <p style="color:var(--text-muted);font-size:0.85rem;max-width:350px;margin-top:0.5rem;">الرياض، حي النخيل. نحن بانتظارك لتجربة الواقع الحسي كما لم تره من قبل.</p>
+            </div>
+            <div class="socials">
+                <a href="https://www.tiktok.com/@skoops.sa" target="_blank">TikTok</a>
+                <a href="https://www.instagram.com/skoops.sa" target="_blank">Instagram</a>
+                <a href="https://www.snapchat.com/add/skoops.sa" target="_blank">Snapchat</a>
+            </div>
+            <div>
+                <p style="color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:0.5rem;">Created for Digital Sensation</p>
+                <i class="fa-brands fa-apple-pay" style="font-size:2rem;opacity:0.4;margin:0 0.3rem;"></i>
+                <i class="fa-brands fa-cc-visa" style="font-size:2rem;opacity:0.4;margin:0 0.3rem;"></i>
+            </div>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('three-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 15;
+
+        const particlesGeo = new THREE.BufferGeometry();
+        const particlesCount = 600;
+        const positions = new Float32Array(particlesCount * 3);
+        const colors = new Float32Array(particlesCount * 3);
+        const sizes = new Float32Array(particlesCount);
+
+        const colorPalette = [
+            new THREE.Color('#FF5E00'),
+            new THREE.Color('#FF007F'),
+            new THREE.Color('#A855F7'),
+            new THREE.Color('#00C2FF'),
+            new THREE.Color('#FACC15'),
+        ];
+
+        for (let i = 0; i < particlesCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 30;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+            const col = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+            colors[i * 3] = col.r;
+            colors[i * 3 + 1] = col.g;
+            colors[i * 3 + 2] = col.b;
+            sizes[i] = Math.random() * 3 + 0.5;
+        }
+
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particlesGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        particlesGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const particlesMat = new THREE.PointsMaterial({
+            size: 0.08,
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.7,
+            sizeAttenuation: true,
+        });
+
+        const particles = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particles);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        scene.add(ambientLight);
+
+        const mouse = { x: 0, y: 0 };
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.003;
+
+            particles.rotation.y += 0.0002;
+            particles.rotation.x += 0.0001;
+            particles.rotation.x += (mouse.y * 0.02 - particles.rotation.x) * 0.05;
+            particles.rotation.y += (mouse.x * 0.02 - particles.rotation.y) * 0.05;
+
+            const sizesArr = particles.geometry.attributes.size.array;
+            for (let i = 0; i < particlesCount; i++) {
+                sizesArr[i] = (Math.sin(time * 5 + i * 0.1) + 1.5) * 1.5;
+            }
+            particles.geometry.attributes.size.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        // ==================== REAL PRODUCTS DATA ====================
+        const products = [
+            {
+                id: 1,
+                name: 'تاكو البيستاشيو والكنافة',
+                crunch: 90,
+                sweet: 55,
+                temp: 30,
+                intensity: 85,
+                img: 'https://img.ananinja.com/a28c5c5465e81524dc35d0e2b68a8d8c4eca14a0.jpg',
+                desc: 'تصادم حسي بين قرمشة الكنافة المحمصة وبرودة الجيلاتو الإيطالي الفاخر. طبقة البيستاشيو الغنية مع طلاء الشوكولاتة الناعم.',
+                price: '22 SAR'
+            },
+            {
+                id: 2,
+                name: 'كريم بورليه فانيلا',
+                crunch: 45,
+                sweet: 85,
+                temp: 20,
+                intensity: 60,
+                img: 'https://resizer.deliverect.com/bd6029c13473ca58648b3cf4cec823d3bafc5ad0.jpg',
+                desc: 'طبقة السكر المكرمل يدوياً تغطي برودة حريرية من الفانيلا الطبيعية. التوازن المثالي بين الحلاوة والقرمشة.',
+                price: '18 SAR'
+            },
+            {
+                id: 3,
+                name: 'ماتشا تيراميسو',
+                crunch: 25,
+                sweet: 35,
+                temp: 40,
+                intensity: 50,
+                img: 'https://images.deliveryhero.io/c738da6faf9482ed0f3c0f5c671521d0f667467c.jpeg',
+                desc: 'خيار النخبة: مرارة الماتشا الفاخرة مع توازن دقيق جداً في مستويات الحلاوة. للمحبين الذواقة.',
+                price: '20 SAR'
+            },
+            {
+                id: 4,
+                name: 'تاكو برولين تشوكلت',
+                crunch: 85,
+                sweet: 70,
+                temp: 25,
+                intensity: 90,
+                img: 'https://images.deliveryhero.io/c738da6faf9482ed0f3c0f5c671521d0f667467c.jpeg',
+                desc: 'لعشاق الشوكولاتة المكثفة مع قرمشة الوافل الذهبي المميزة. طبقات من النكهة الغنية في كل قضمة.',
+                price: '22 SAR'
+            },
+            {
+                id: 5,
+                name: 'بودينق التوفي والبيكان',
+                crunch: 40,
+                sweet: 90,
+                temp: 50,
+                intensity: 70,
+                img: 'https://www.wellseasonedstudio.com/wp-content/uploads/2023/01/Sticky-Toffee-Pudding-Well-Seasoned-Studio-2.jpg',
+                desc: 'تجربة دافئة غارقة في صوص التوفي والبيكان المحمص. حلاوة مكثفة للحظات المكافأة.',
+                price: '24 SAR'
+            },
+            {
+                id: 6,
+                name: 'كوكيز ساندي',
+                crunch: 60,
+                sweet: 75,
+                temp: 30,
+                intensity: 65,
+                img: 'https://static.wixstatic.com/media/7e82a427ff080ec7c6cb36d4d608030438bd18f7.jpeg',
+                desc: 'الدمج الأيقوني بين قطعتي كوكيز مخبوزتين وحشوة الآيسكريم الباردة. كلاسيكي بأسلوب Skoops!.',
+                price: '19 SAR'
+            },
+            {
+                id: 7,
+                name: 'ستروبيري تشيز كيك',
+                crunch: 35,
+                sweet: 80,
+                temp: 35,
+                intensity: 55,
+                img: 'https://www.kalscoops.com/wp-content/uploads/2023/04/Strawberry-Cheesecake-SideScoop-480x480.jpg',
+                desc: 'نكهة الفراولة الطازجة مع قاعدة الجبن الكريمي. ناعم، منعش، وغني في آن واحد.',
+                price: '17 SAR'
+            },
+            {
+                id: 8,
+                name: 'روكي رود',
+                crunch: 50,
+                sweet: 75,
+                temp: 30,
+                intensity: 80,
+                img: 'https://www.swensensicecream.com/wp-content/uploads/2023/05/Rocky-Road-418x400.jpg',
+                desc: 'شوكولاتة غنية مع حبات المارشميلو واللوز المحمص. نسيج متباين ينفجر في الفم.',
+                price: '18 SAR'
+            },
+            {
+                id: 9,
+                name: 'تشوكلت شيب كوكي دو',
+                crunch: 55,
+                sweet: 78,
+                temp: 25,
+                intensity: 72,
+                img: 'https://www.kalscoops.com/wp-content/uploads/2023/04/CHOCOLATE-CHIP-COOKIE-DOUGH-480x480.jpg',
+                desc: 'عجينة الكوكيز الطازجة مع رقائق الشوكولاتة الداكنة. نكهة الطفولة بأسلوب Skoops! المتطور.',
+                price: '17 SAR'
+            },
+            {
+                id: 10,
+                name: 'بينا كولادا',
+                crunch: 20,
+                sweet: 70,
+                temp: 45,
+                intensity: 45,
+                img: 'https://www.midwestliving.com/wp-content/uploads/2023/04/peach-ice-cream-MWDF032.jpg',
+                desc: 'نكهة استوائية منعشة تجمع بين الأناناس وجوز الهند. خيار مثالي للأيام الحارة.',
+                price: '16 SAR'
+            },
+            {
+                id: 11,
+                name: 'نوتيلا بودينق',
+                crunch: 30,
+                sweet: 95,
+                temp: 40,
+                intensity: 85,
+                img: 'https://www.texanerin.com/wp-content/uploads/2023/07/nutella-ice-cream-1.jpg',
+                desc: 'بودينق غني بنكهة النوتيلا المكثفة. طبقات من الشوكولاتة والبندق في كل ملعقة.',
+                price: '26 SAR'
+            },
+            {
+                id: 12,
+                name: 'كرنش كراميل تيراميسو',
+                crunch: 65,
+                sweet: 60,
+                temp: 35,
+                intensity: 75,
+                img: 'https://resizer.deliverect.com/bd6029c13473ca58648b3cf4cec823d3bafc5ad0.jpg',
+                desc: 'تيراميسو كلاسيكي مع طبقة كراميل مقرمشة. التوازن المثالي بين القهوة والحلاوة.',
+                price: '23 SAR'
+            }
+        ];
+
+        const state = {
+            cart: 0,
+            cartItems: [],
+            mood: '',
+            crunch: 50,
+            sweet: 50,
+            temp: 50,
+            intensity: 50,
+            recommended: null,
+        };
+
+        function renderMenu() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = products
+                .map(
+                    (p) => `
+                <div class="product-card glass reveal">
+                    <div class="img-wrap">
+                        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80'">
+                        <div class="img-overlay"></div>
+                    </div>
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p class="desc">${p.desc}</p>
+                        <span class="price">${p.price}</span>
+                        <button class="add-btn" onclick="window.addToBag(${p.id})">
+                            <i class="fa-solid fa-plus"></i> أضف إلى الحقيبة
+                        </button>
+                    </div>
+                </div>
+            `
+                )
+                .join('');
+            observeReveal();
+        }
+
+        window.addToBag = function (id) {
+            state.cart++;
+            const product = products.find((p) => p.id === id);
+            if (product) state.cartItems.push(product);
+            updateCartUI();
+            showToast(`تمت إضافة "${product?.name}" إلى الحقيبة الحسية!`);
+            playClickSound();
+        };
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartCount');
+            badge.textContent = state.cart;
+            badge.classList.add('pulse');
+            setTimeout(() => badge.classList.remove('pulse'), 400);
+        }
+
+        function toggleCart() {
+            if (state.cart === 0) {
+                showToast('حقيبتك الحسية فارغة. استكشف المنيو!');
+                return;
+            }
+            const items = state.cartItems.map((i) => i.name).join('، ');
+            showToast(`في حقيبتك: ${items} (${state.cart} منتجات)`);
+        }
+        window.toggleCart = toggleCart;
+
+        window.addRecommendedToBag = function () {
+            if (state.recommended) {
+                window.addToBag(state.recommended.id);
+            }
+        };
+
+        window.selectMood = function (mood) {
+            state.mood = mood;
+            playClickSound();
+            switchStep(1, 2);
+        };
+
+        window.updateSlider = function (type) {
+            const range = document.getElementById(`${type}Range`);
+            const val = parseInt(range.value);
+            state[type] = val;
+            const display = document.getElementById(`${type}Val`);
+            if (display) display.textContent = val + '%';
+        };
+
+        function switchStep(from, to) {
+            const fromEl = document.getElementById(`step${from}`);
+            const toEl = document.getElementById(`step${to}`);
+            fromEl.classList.remove('active');
+            fromEl.style.display = 'none';
+            toEl.style.display = 'block';
+            requestAnimationFrame(() => {
+                toEl.classList.add('active');
+            });
+            document.getElementById('engineBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        window.runAlgorithm = function () {
+            const moodWeights = {
+                energized: { crunch: 1.4, sweet: 0.7, temp: 0.8, intensity: 1.3 },
+                chill: { crunch: 0.6, sweet: 1.3, temp: 1.5, intensity: 0.5 },
+                creative: { crunch: 1.0, sweet: 0.8, temp: 1.0, intensity: 1.2 },
+                reward: { crunch: 1.0, sweet: 1.5, temp: 0.9, intensity: 1.1 },
+            };
+            const weights = moodWeights[state.mood] || { crunch: 1, sweet: 1, temp: 1, intensity: 1 };
+
+            let best = null;
+            let bestDist = Infinity;
+            for (const p of products) {
+                const dist = Math.sqrt(
+                    Math.pow((p.crunch - state.crunch) * weights.crunch, 2) +
+                        Math.pow((p.sweet - state.sweet) * weights.sweet, 2) +
+                        Math.pow((p.temp - state.temp) * weights.temp, 2) +
+                        Math.pow((p.intensity - state.intensity) * weights.intensity, 2)
+                );
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = p;
+                }
+            }
+
+            if (best) {
+                state.recommended = best;
+                document.getElementById('resultImg').src = best.img;
+                document.getElementById('resultTitle').textContent = best.name;
+                document.getElementById('resultDesc').textContent = best.desc;
+                const matchPercent = Math.round(Math.max(70, 100 - bestDist * 0.5));
+                document.getElementById('resultMatch').textContent = `MATCH ${matchPercent}%`;
+                switchStep(2, 3);
+                playSuccessSound();
+            }
+        };
+
+        window.resetEngine = function () {
+            state.mood = '';
+            state.crunch = 50;
+            state.sweet = 50;
+            state.temp = 50;
+            state.intensity = 50;
+            state.recommended = null;
+            document.getElementById('crunchRange').value = 50;
+            document.getElementById('sweetRange').value = 50;
+            document.getElementById('tempRange').value = 50;
+            document.getElementById('intensityRange').value = 50;
+            document.getElementById('crunchVal').textContent = '50%';
+            document.getElementById('sweetVal').textContent = '50%';
+            document.getElementById('tempVal').textContent = '50%';
+            document.getElementById('intensityVal').textContent = '50%';
+            const step3 = document.getElementById('step3');
+            step3.classList.remove('active');
+            step3.style.display = 'none';
+            const step1 = document.getElementById('step1');
+            step1.style.display = 'block';
+            requestAnimationFrame(() => step1.classList.add('active'));
+            document.getElementById('engineBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        let audioCtx = null;
+
+        function getAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playClickSound() {
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        function playSuccessSound() {
+            try {
+                const ctx = getAudioCtx();
+                const now = ctx.currentTime;
+                [523, 659, 784].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.12);
+                    gain.gain.setValueAtTime(0.2, now + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.3);
+                    osc.start(now + i * 0.12);
+                    osc.stop(now + i * 0.12 + 0.3);
+                });
+            } catch (e) {}
+        }
+
+        window.scrollToSection = function (id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        function observeReveal() {
+            const revealEls = document.querySelectorAll('.reveal:not(.visible)');
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+            );
+            revealEls.forEach((el) => observer.observe(el));
+        }
+
+        function handleNavScroll() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 60) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+        window.addEventListener('scroll', handleNavScroll, { passive: true });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            observeReveal();
+            handleNavScroll();
+            document.querySelectorAll('.reveal').forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    el.classList.add('visible');
+                }
+            });
+        });
+
+        window.addToBag = window.addToBag;
+        window.selectMood = window.selectMood;
+        window.updateSlider = window.updateSlider;
+        window.runAlgorithm = window.runAlgorithm;
+        window.resetEngine = window.resetEngine;
+        window.addRecommendedToBag = window.addRecommendedToBag;
+        window.scrollToSection = window.scrollToSection;
+        window.toggleCart = window.toggleCart;
+
+        console.log('%c Skoops! Neural Engine v3.0 %c| Sensation Architecture 2026',
+            'color:#FF5E00;font-size:1.5em;font-weight:900;',
+            'color:#fff;font-size:1em;');
+        console.log('%c All systems calibrated. Dopamine pathways ready.',
+            'color:#FF007F;font-style:italic;');
+    </script>
+</body>
+</html>
